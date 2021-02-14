@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/', (req, res) => {
     createCoach(req.body)
         .then(result => { (result) ? res.status(200).json(result._id) : res.status(400).send() })
-        //.catch(err => res.status(404).send(err))
+        .catch(err => res.status(404).send(err))
 });
 // --------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
 router.get('/latitude/:lat/longitude/:long', (req, res) => {
     getCoaches(req.params.lat, req.params.long)
         .then(result => { (result.length > 0) ? res.status(200).json(result) : res.status(400).send() })
-        //.catch(err => res.status(404).send(err))
+        .catch(err => res.status(404).send(err))
 });
 
 // READ ONE
