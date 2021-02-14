@@ -1,6 +1,7 @@
 {
   "files.exclude": {
     "CoachAPI.njsproj": true,
-    "CoachAPI.njsproj.user": true
+    "CoachAPI.njsproj.user": true,
+    ".vscode": true
   }
 }
