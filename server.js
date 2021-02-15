@@ -3,7 +3,6 @@ const express = require('express'), // framework nodejs
     mongoose = require('mongoose'), // framework mongoDB 
     restcoach = require('./routes/restcoach'),
     url = process.env.DB_URI; // remote db connection string
-
 const app = express();
 
 app.use(express.json()); // built-in middleware
@@ -22,7 +21,7 @@ mongoose.connect(url, connOpts)
 
 // in case of web request
 app.get('/', (req, res) => {
-    res.send('YourCoach Web Service');
+    res.send('Coach@Home Web Service');
 });
 
 // every request calls a different script based on its path

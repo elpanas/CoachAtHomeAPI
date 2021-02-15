@@ -1,11 +1,16 @@
-const { Coach } = require('../models/schemas');
+const { Coach } = require('../models/schemas'),
+    bcrypt = require('bcrypt');
 
 // CREATE USER
 async function createCoach(data) {
+
+    const psw = Buffer.from(data.password, 'base64').toString();
+    const hash = bcrypt.hashSync(psw, 10);
+
     return await Coach.create({
         name: data.name,
         username: Buffer.from(data.username, 'base64').toString(),
-        password: Buffer.from(data.password, 'base64').toString(),
+        password: hash,
         location: data.location,
         city: data.city
     });
@@ -37,10 +42,12 @@ async function checkLogin(auth) {
     const tmp = auth.split(' ');   // Divido in base allo spazio  "Basic Y2hhcmxlczoxMjM0NQ==" per recuperare la 2a parte
     const buf = Buffer.from(tmp[1], 'base64').toString(); // creo un buffer e lo avviso che l'input e' in base64
     const [username, password] = buf.split(':');      // divido auth in base a ':'
+    const psw = Buffer.from(password, 'base64').toString();
+    const hash = bcrypt.hashSync(psw, 10);
     
     return await Coach.findOne({
         username: username,
-        password: password
+        password: hash
         }).lean();      
 }
 // --------------------------------------------------------------------
