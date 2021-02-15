@@ -41,7 +41,7 @@ router.get('/login', (req, res) => {
 
 // UPDATE
 router.put('/', (req, res) => {
-    checkLogin(req.headers.authorization)
+    checkLogin(req.headers.authorization)    
         .then(result => { 
             if (result) {
                 updateCoach(req.body)

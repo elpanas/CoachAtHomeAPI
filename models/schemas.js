@@ -19,7 +19,7 @@ const coachSchema = Schema({
     instagram: { type: String, default: '' },
     linkedin: { type: String, default: '' },
     bio: { type: String, default: '' }
-}).index({ username: 1, password: 1, location : "2dsphere" });
+}).index({ location: "2dsphere" });
 
 const Coach = mongoose.model('coach', coachSchema);
 // --------------------------------------------------------------------

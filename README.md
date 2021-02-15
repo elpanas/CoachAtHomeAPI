@@ -63,13 +63,13 @@ Framework e Addons utilizzati:
 
 Endpoints e metodi:
 
-<code>
+<pre>
 router.post('/', (req, res) => createCoach())
 router.get('/latitude/:lat/longitude/:long', (req, res) => getCoaches())
 router.get('/id/:id', (req, res) => getCoach())
 router.get('/login', (req, res) => checkLogin())
 router.put('/', (req, res) => updateCoach())
-</code>
+</pre>
 
 #### Query al DB remoto
 Ogni query viene effettuata per mezzo del framework Mongoose utilizzando il metodo .lean() al termine delle pipeline, in modo da ottenere degli oggetti semplici e leggeri, da inviare poi tramite Node.js Express al client.
@@ -77,7 +77,7 @@ Ogni query viene effettuata per mezzo del framework Mongoose utilizzando il meto
 #### App Mobile
 Premendo il tasto Cerca viene inviata l'attuale posizione in base alla quale il web service provvederà a richiedere i dati al DB e ad inviarli in formato JSON al client, che li visualizzerà. Cliccando su ogni nome l'app porterà l'utente ad una nuova pagina Profilo, dove sarà possibile avere maggiori informazioni e contatti.
 
-IMMAGINE
+<p align="center">[[https://github.com/elpanas/BeachU/blob/master/images/01.png|height=400px]]</p>
 
 Cliccando sui contatti e sulle icone dei relativi social (ove presenti), l'utente viene indirizzato automaticamente all'app corrispondente.
 Inoltre è possibile aggiungere l'allenatore ad una lista preferiti, cliccando sul pulsante con il cuore. I dati essenziali verranno inseriti un un database locale, sempre NoSQL, chiamato Sembast che corrisponde ad un semplice file memorizzato nello smartphone.
@@ -155,12 +155,9 @@ http.get(url + 'coach' + '/latitude/' + latitude + '/longitude/' + longitude)
 #### Sicurezza
 Le richieste HTTP avvengono tutte (POST, GET, PUT) con protocollo https.
 
-Le password degli utenti e il codice identificativo della chat memorizzati nel db, vengono convertiti con codifica hash per mezzo del pacchetto npm BCrypt di Node.js
-
 E' utilizzata un'autenticazione base per evitare richieste put indesiderate all'API
 
 La stringa di accesso al DB remoto è memorizzata in variabili d'ambiente impostate tramite l'interfaccia Heroku.
-
 
 ## Messa online del web service
 Avviene automaticamente, in quanto il fornitore dello spazio web, Heroku, è collegato alla repository GitHub dell'app in questione. Ad ogni modifica, i file presenti sul branch indicato vengono caricati sui server Heroku.
