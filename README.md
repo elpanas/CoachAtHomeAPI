@@ -1,5 +1,5 @@
 # Coach@Home
-
+![Logo](https://github.com/elpanas/CoachAtHomeApp/blob/master/images/logo.png)
 ## Sviluppatore
 
 **Nome:** Luca 
@@ -22,13 +22,13 @@ L'applicazione è attualmente costituita da 3 componenti:
 E' stato creato utilizzando il framework crossplatform Flutter, in modo da rendere l'app compatibile per Android e iOS, oltre che veloce ed efficiente.
 
 #### Il Web Service
-Il fornitore dello spazio web è Heroku.
 Il WS è stato implementato in linguaggio Node.js, utilizzando un approccio prevalentemente procedurale con l'aggiunta di alcune classi che forniscono funzioni extra.
+Il fornitore dello spazio web è Heroku.
 
 #### Il Database
-E' stato scelto un database NoSQL, in particolare MongoDB fornito dall'azienza omonima. Nel database vengono memorizzate le informazioni sugli istruttori.
+E' stato scelto un database NoSQL, in particolare MongoDB fornito dall'azienda omonima. Nel database vengono memorizzate le informazioni sugli istruttori, sia quello remoto che locale. La differenza è che in quello locale sono memorizzate solo alcune info per richiamare poi quelle remote al bisogno.
 
-Ogni documento del db segue il seguente schema per la validazione:
+Ogni documento del db remoto segue il seguente schema per la validazione:
 
 **Coach**
 
@@ -41,54 +41,31 @@ Ogni documento del db segue il seguente schema per la validazione:
 - #### Ricerca per posizione
 L'app invia la propria posizione in modo semi-silente al webservice e riceve la lista degli istruttori in un raggio di 20Km
 - #### Lista Preferiti
-Dal menu laterale (Drawer) l'utente accede ad una lista preferiti.
+Dal menu laterale (Drawer) l'utente accede ad una lista preferiti o al proprio profilo se è registrato.
 
-## Dettagli tecnici
-L'API basa il suo funzionamento sull'interscambio di dati tra client e server per mezzo di richieste HTTP così formate:
+## Casi d'uso
+- Utente non registrato: può accedere alla ricerca, ai preferiti (visualizzazione/modifica/cancellazione) e ai profili (visualizzazione).
+- Utente registrato: può accedere alle stesse funzioni dell'utente non registrato, più la possibilità di effettuare il login, logout e modificare il proprio profilo.
 
-#### HTTP Requests client/server
-Le richieste HTTP tra il client e il web service sono di tipo POST, GET e PUT.
+## App Mobile - Esperienza utente (UX)
+Premendo il tasto Cerca viene inviata l'attuale posizione in base alla quale il web service provvederà a richiedere i dati al DB e ad inviarli in formato JSON al client, che li visualizzerà.
 
-Sia quelle in input che output trasportano dati in formato JSON, preventivamente (de)codificati per mezzo dell'apposita funzione <code>jsonEncode/Decode()</code> fornita dal framework Node.js sul server e Flutter sul client.
+![lista](https://github.com/elpanas/CoachAtHomeApp/blob/master/images/list.png)
 
-I dati all'interno dei file JSON, sono costituiti da voci di menu, informazioni sulla posizione e password.
+Cliccando su ogni nome l'app porterà l'utente ad una nuova pagina Profilo, dove sarà possibile avere maggiori informazioni e contatti.
 
-Si è scelto di utilizzare il linguaggio Node.js data la natura testuale delle informazioni scambiate.
-Framework e Addons utilizzati:
-
-- **Express:** semplifica la gestione degli endpoint e dei request/response
-- **Mongoose:** semplifica le query al DB
-- **Bcrypt:** crea l'hash delle password
-- **Dotenv:** accede alle variabili d'ambiente
-
-Endpoints e metodi:
-
-<pre>
-router.post('/', (req, res) => createCoach())
-router.get('/latitude/:lat/longitude/:long', (req, res) => getCoaches())
-router.get('/id/:id', (req, res) => getCoach())
-router.get('/login', (req, res) => checkLogin())
-router.put('/', (req, res) => updateCoach())
-</pre>
-
-#### Query al DB remoto
-Ogni query viene effettuata per mezzo del framework Mongoose utilizzando il metodo .lean() al termine delle pipeline, in modo da ottenere degli oggetti semplici e leggeri, da inviare poi tramite Node.js Express al client.
-
-#### App Mobile
-Premendo il tasto Cerca viene inviata l'attuale posizione in base alla quale il web service provvederà a richiedere i dati al DB e ad inviarli in formato JSON al client, che li visualizzerà. Cliccando su ogni nome l'app porterà l'utente ad una nuova pagina Profilo, dove sarà possibile avere maggiori informazioni e contatti.
-
-<p align="center">[[https://github.com/elpanas/BeachU/blob/master/images/01.png|height=400px]]</p>
+![profilo](https://github.com/elpanas/CoachAtHomeApp/blob/master/images/profile.png)
 
 Cliccando sui contatti e sulle icone dei relativi social (ove presenti), l'utente viene indirizzato automaticamente all'app corrispondente.
 Inoltre è possibile aggiungere l'allenatore ad una lista preferiti, cliccando sul pulsante con il cuore. I dati essenziali verranno inseriti un un database locale, sempre NoSQL, chiamato Sembast che corrisponde ad un semplice file memorizzato nello smartphone.
 
-IMMAGINE2
+![preferiti](https://github.com/elpanas/CoachAtHomeApp/blob/master/images/fav.png)
 
 Se a visualizzare la pagina profilo è lo stesso allenatore, al posto del cuore appare un'icona con la matita. Cliccandola si viene reindirizzati alla pagina di modifica, in cui alcuni campi potrebbero essere già riempiti con i dati presenti nel database remoto.
 
-Vediamo alcuni metodi significativi per le richieste remote.
+![modifica](https://github.com/elpanas/CoachAtHomeApp/blob/master/images/mod.png)
 
-Invia i dati di un nuovo allenatore:
+### Tecnologia
 
 <pre>
 http.post(
@@ -151,8 +128,57 @@ Richiede la lista allenatori in base alla posizione
 http.get(url + 'coach' + '/latitude/' + latitude + '/longitude/' + longitude)
 </pre>
 
+### Pacchetti
+*Geolocator:* restituisce informazioni riguardanti la posizione dell'utente. In particolare vengono utilizzate le coordinate latitudine e longitudine (Lista istruttori)
 
-#### Sicurezza
+*Flutter Secure Storage:* memorizza i dati in aree di memoria criptate dello smartphone. In questo caso sono stati memorizzati username, password e l'id dell'utente se registrato.
+
+*Flutter Phone Direct Caller:* permette di effettuare una chiamata il dialer dello smartphone (Profilo)
+
+*URL Launcher:* apre il link con il browser dello smartphone (Profilo)
+
+*Flutter E-mail sender:* apre l'app per le mail predefinita e crea un nuovo messaggio con l'email fornita (Profilo)
+
+*Social Media Buttons:* permettono di aprire le rispettive app al click sulla relativa icona. (Profilo)
+
+*Material Design Icons Flutter:* fornisce icone aggiuntive mancanti, ad esempio quelle dei social. (Profilo)
+
+*Sembast:* database NoSQL locale. Vengono memorizzati/letti i preferiti (Profilo, Preferiti)
+
+*Path Provider:* fornisce il percorso predefinito di alcune cartelle dello smartphone, ad esempio Documenti, Download. In questo caso è stato utilizzato per avere il percorso della cartella in cui memorizzare il file del db Sembast.
+
+## Web Service
+L'API basa il suo funzionamento sull'interscambio di dati tra client e server per mezzo di richieste HTTP così formate:
+
+### HTTP Requests client/server
+Le richieste HTTP tra il client e il web service sono di tipo POST, GET e PUT.
+
+Sia quelle in input che output trasportano dati in formato JSON, preventivamente (de)codificati per mezzo dell'apposita funzione <code>jsonEncode/Decode()</code> fornita dal framework Node.js sul server e Flutter sul client.
+
+I dati all'interno dei file JSON, sono costituiti da voci di menu, informazioni sulla posizione e password.
+
+Si è scelto di utilizzare il linguaggio Node.js data la natura testuale delle informazioni scambiate.
+Framework e Addons utilizzati:
+
+- **Express:** semplifica la gestione degli endpoint e dei request/response
+- **Mongoose:** semplifica le query al DB
+- **Bcrypt:** crea l'hash delle password
+- **Dotenv:** accede alle variabili d'ambiente
+
+Endpoints e metodi:
+
+<pre>
+router.post('/', (req, res) => createCoach())
+router.get('/latitude/:lat/longitude/:long', (req, res) => getCoaches())
+router.get('/id/:id', (req, res) => getCoach())
+router.get('/login', (req, res) => checkLogin())
+router.put('/', (req, res) => updateCoach())
+</pre>
+
+### Query al DB remoto
+Ogni query viene effettuata per mezzo del framework Mongoose utilizzando il metodo .lean() al termine delle pipeline, in modo da ottenere degli oggetti semplici e leggeri, da inviare poi tramite Node.js Express al client.
+
+### Sicurezza
 Le richieste HTTP avvengono tutte (POST, GET, PUT) con protocollo https.
 
 E' utilizzata un'autenticazione base per evitare richieste put indesiderate all'API
@@ -175,6 +201,4 @@ Avviene automaticamente, in quanto il fornitore dello spazio web, Heroku, è col
 * Database: MongoDB 4.4 Atlas, 512MB, RAM condivisa
 
 ## Conclusione
-L'applicazione crea una piattaforma di comunicazione tra il cliente (l'atleta) e l'istruttore in modo da dare al primo la possibilità di allenarsi a casa e al secondo visibilità che invece non avrebbe, non apparendo sulle mappe o sui vecchi elenchi telefonici.
-
-
+L'applicazione crea una piattaforma di comunicazione tra il cliente (l'atleta) e l'istruttore in modo da dare al primo la possibilità di allenarsi a casa e al secondo visibilità che invece non avrebbe, poichè non appare sulle mappe o sui vecchi elenchi telefonici.
